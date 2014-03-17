@@ -22,7 +22,8 @@ function Parse-Arguments {
         $result = New-Object PSCustomObject
         Add-Member -InputObject $result -NotePropertyMembers @{
             "ArgumentStart"=$argumentStart;
-            "Raw"=$arguments
+            "Raw"=$arguments;
+            "Cancel"=$false;
         }
         $result
     }
