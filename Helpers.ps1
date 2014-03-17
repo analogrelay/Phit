@@ -45,3 +45,23 @@ function Set-PSGitConfig {
         [Parameter(Mandatory=$true, Position = 1)][string]$Value)
     git config -f (Get-ConfigFilePath) $Name $Value
 }
+
+function Get-GitFilePaths($Path) {
+    # Have to find Git's casing of the path because the assume-unchanged flag is case-sensitive.
+    $gitfiles = @(git ls-files)
+    $toplevel = (git rev-parse --show-toplevel)
+    dir $Path | foreach { 
+        # Fix the path
+        $p = $_.FullName.Replace("\", "/"); 
+        $relative = $p.Substring($toplevel.Length + 1)
+        $gitfiles | 
+            where { [String]::Equals($_, $relative, "OrdinalIgnoreCase") } | 
+            Select -First 1
+    }
+}
+
+function exec($cmd) {
+    Write-Host -ForegroundColor Magenta "phit> " -NoNewLine
+    Write-Host "$cmd $args"
+    & $cmd $args
+}
